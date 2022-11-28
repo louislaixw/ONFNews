@@ -6,9 +6,30 @@ let sportsNews = document.querySelector('#sportsNews .newsBox');
 let businessNews = document.querySelector('#businessNews .newsBox')
 let techNews = document.querySelector('#techNews. newsBox')
 
+let header = document.querySelector('.header')
+let toggleMenu = document.querySelector('.bar')
+let menu = document.querySelector('nav ul')
+
+const toggle = (e)=>{
+    toggleMenu.classList.toggle('active')
+    menu.classList.toggle('activeMenu')
+}
+
+toggleMenu.addEventListener('click',toggle)
+
+window.addEventListener('scroll',()=>{
+    if(window.scroll>50){
+        header.classList.add('sticky')
+    }
+    else{
+        header.classList.remove('sticky')
+    }
+}
+
+
 //fetching news from website api
 
-const apiKey = "0a2378092b2740c498334a128df5dfa3";
+const apikey = "0a2378092b2740c498334a128df5dfa3";
 
 const fetchData = async (category,pageSize)=>{
     const url = 'https://newsapi.org/v2/top-headlines?country=us&category=${category}&pageSize=${pageSize}&apiKey=${apiKey}';
@@ -18,8 +39,7 @@ const fetchData = async (category,pageSize)=>{
     console.log(response);
     return response.articles;
 }
-
-//fetchData('general', 5);
+fetchData('general', 5);
 
 //adding breaking News 
 
@@ -126,8 +146,8 @@ const add_techNews = (data)=>{
                         <a href=${element.url} target="_blank"><p>${title}</p></a>
                         </div>
                     </div>
-                </div>`
+                </div>`;
     })
-    techNews.innerHTML = html
+    techNews.innerHTML = html;
 }
 fetchData('technology',5).then(add_techNews)
