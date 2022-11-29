@@ -31,7 +31,6 @@ window.addEventListener('scroll',()=>{
 
 // fetching news data from a website providing api
 
-// const apiKey = "0a2378092b2740c498334a128df5dfa3"
 const apiKey = "00dcc41a750b48058681f323d5fbb8af"
 
 const fetchData = async (category,pageSize)=>{
@@ -45,7 +44,7 @@ const fetchData = async (category,pageSize)=>{
     // return response.articles
     
 }
-// fetchData('general',5)
+fetchData('general',5)
 
 //adding breaking news
 
@@ -113,6 +112,7 @@ const add_sportsNews = (data)=>{
     sportsNews.innerHTML = html
 }
 fetchData('sports',5).then(add_sportsNews)
+
 const add_businessNews = (data)=>{
     let html = ''
     let title = ''

@@ -18,7 +18,6 @@ $url_components = parse_url($url);
 // Use parse_str() function to parse the
 // string passed via URL
 parse_str($url_components['query'], $params);
-
 // Display result
 
 $hash_url = $params['url'];
@@ -45,9 +44,7 @@ if(isset($_SESSION['name'])){
     
     $name = $_SESSION['name'];
     $comment = true;
-
 }
-
 ?>
 
 
