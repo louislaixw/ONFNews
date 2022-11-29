@@ -1,3 +1,16 @@
+<?php
+@include 'config.php';
+session_start();
+
+$comment = false;
+
+if(isset($_SESSION['name'])){
+    $name = $_SESSION['name'];
+    $comment = true;
+};
+?>
+
+
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
@@ -18,6 +31,13 @@
                 <li><a href="#sportsNews">Sports</a></li>
                 <li><a href="#businessNews">Business</a></li>
                 <li><a href="#techNews">Technology</a></li>
+                <?php
+                if($comment){
+                    echo '<li><a href="logout.php" style="font-weight:bold;">LOGOUT</a></li>';
+                }else{
+                    echo '<li><a href="login.php" style="font-weight:bold;">LOGIN</a></li>';
+                }
+                ?>
             </ul>
             <div class="bar">
                 <i class="open fa-solid fa-bars-staggered"></i>
@@ -93,9 +113,9 @@
                 <div class="contactUs">
                     <div class="contact">
                         <p>Contact Us</p>
-                        <div><span>012-34567890</span></div>
-                        <div><span>abc123@gmail.com</span></div>
-                        <div><span>Penang, Malaysia</span></div>
+                        <div>Phone Number - <span>012-34567890</span></div>
+                        <div>Email - <span>abc123@gmail.com</span></div>
+                        <div>Address - <span>Penang, Malaysia</span></div>
                     </div>
                     
                 </div>
@@ -105,9 +125,7 @@
                     <p>Haven't subscribed?</p>
                     <div class="email">
                         <input type="email" placeholder="Enter Your Email Here">
-                        <button>Subscribe</button>
-                
-                        
+                        <button><a href="register.php">Subscribe</a></button>
 
                     </div>
                 </div>
@@ -122,5 +140,6 @@
 
 
     <script src="./index.js"></script>
+
 </body>
 </html>

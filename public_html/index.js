@@ -1,10 +1,11 @@
-let breakingImg = document.querySelector('#breakingImg');
-let breakingNews_title = document.querySelector('#breakingNews. title')
-let breakingNews_desc = document.querySelector('#breakingNews. description');
-let topNews = document.querySelector('.topNews');
-let sportsNews = document.querySelector('#sportsNews .newsBox');
+
+let breakingImg = document.querySelector('#breakingImg')
+let breakingNews_title = document.querySelector('#breakingNews .title')
+let breakingNews_desc = document.querySelector('#breakingNews .description')
+let topNews = document.querySelector('.topNews')
+let sportsNews = document.querySelector('#sportsNews .newsBox')
 let businessNews = document.querySelector('#businessNews .newsBox')
-let techNews = document.querySelector('#techNews. newsBox')
+let techNews = document.querySelector('#techNews .newsBox')
 
 let header = document.querySelector('.header')
 let toggleMenu = document.querySelector('.bar')
@@ -17,56 +18,63 @@ const toggle = (e)=>{
 
 toggleMenu.addEventListener('click',toggle)
 
+
+
 window.addEventListener('scroll',()=>{
-    if(window.scroll>50){
+    if(window.scrollY>50){
         header.classList.add('sticky')
     }
     else{
         header.classList.remove('sticky')
     }
-}
+})
 
-
-//fetching news from website api
-
-const apikey = "0a2378092b2740c498334a128df5dfa3";
+// fetching news data from a website providing api
+const apiKey = "0a2378092b2740c498334a128df5dfa3"
+//const apiKey = "00dcc41a750b48058681f323d5fbb8af"
 
 const fetchData = async (category,pageSize)=>{
-    const url = 'https://newsapi.org/v2/top-headlines?country=us&category=${category}&pageSize=${pageSize}&apiKey=${apiKey}';
-    
-    const data = await fetch(url);
-    const response = await data.json();
+    const url = `https://newsapi.org/v2/top-headlines?country=us&category=${category}&pageSize=${pageSize}&apiKey=${apiKey}`
+    const data = await fetch(url)
+    const response = await data.json()
     console.log(response);
-    return response.articles;
+    return response.articles
+    
 }
-fetchData('general', 5);
+// fetchData('general',5)
 
-//adding breaking News 
+//adding breaking news
 
 const add_breakingNews = (data)=>{
-    breakingImg.innerHTML = '<img src=${data[0].urlToImage} alt="image">';
-    breakingNews_title.innerHTML = '<a href=${data[0].url}target= "_blank"><h2>${data[0].title}</h2></a>';
-    breakingNews_desc.innerHTML = '${data[0].description}';
+    breakingImg.innerHTML = `<img src=${data[0].urlToImage} onclick = saveURL(${data[0].url}) alt="image">`
+    breakingNews_title.innerHTML = `<a onclick=saveURL(${data[0].url}) target="_blank"><h2>${data[0].title}</h2></a>`
+    breakingNews_desc.innerHTML = `${data[0].description}`
 }
-fetchData('general',5).then(add_breakingNews);
+fetchData('general',20).then(add_breakingNews)
+
+const saveURL = (data) => {
+    console.log('hihihhi');
+    sessionStorage.setItem("url", data);
+}
 
 const add_topNews = (data)=>{
     let html = ''
-    let title =''
+    let title = ''
     data.forEach((element)=>{
         if (element.title.length<100){
             title = element.title
         }
         else{
-            title = element.title.slice(0,100)+"..."
+            title = element.title.slice(0,100) + "..."
         }
+
         html += `<div class="news">
                     <div class="img">
                         <img src=${element.urlToImage} alt="image">
                     </div>
                     <div class="text">
                         <div class="title">
-                        <a href=${element.url} target="_blank"><p>${title}</p></a>
+                        <a href=${window.location.origin}/news/public_html/news.php?url=${element.url} target="_blank"><p>${title}</p></a>
                         </div>
                     </div>
                 </div>`
@@ -83,15 +91,16 @@ const add_sportsNews = (data)=>{
             title = element.title
         }
         else{
-            title = element.title.slice(0,100)+"..."
+            title = element.title.slice(0,100) + "..."
         }
+
         html += `<div class="newsCard">
                     <div class="img">
                         <img src=${element.urlToImage} alt="image">
                     </div>
                     <div class="text">
                         <div class="title">
-                        <a href=${element.url} target="_blank"><p>${title}</p></a>
+                        <a href=${window.location.origin}/news/public_html/news.php?url=${element.url} target="_blank"><p>${title}</p></a>
                         </div>
                     </div>
                 </div>`
@@ -99,7 +108,6 @@ const add_sportsNews = (data)=>{
     sportsNews.innerHTML = html
 }
 fetchData('sports',5).then(add_sportsNews)
-
 const add_businessNews = (data)=>{
     let html = ''
     let title = ''
@@ -117,7 +125,7 @@ const add_businessNews = (data)=>{
                     </div>
                     <div class="text">
                         <div class="title">
-                        <a href=${element.url} target="_blank"><p>${title}</p></a>
+                        <a href=${window.location.origin}/news/public_html/news.php?url=${element.url} target="_blank"><p>${title}</p></a>
                         </div>
                     </div>
                 </div>`
@@ -125,7 +133,6 @@ const add_businessNews = (data)=>{
     businessNews.innerHTML = html
 }
 fetchData('business',5).then(add_businessNews)
-
 const add_techNews = (data)=>{
     let html = ''
     let title = ''
@@ -143,11 +150,11 @@ const add_techNews = (data)=>{
                     </div>
                     <div class="text">
                         <div class="title">
-                        <a href=${element.url} target="_blank"><p>${title}</p></a>
+                        <a href=${window.location.origin}/news/public_html/news.php?url=${element.url} target="_blank"><p>${title}</p></a>
                         </div>
                     </div>
-                </div>`;
+                </div>`
     })
-    techNews.innerHTML = html;
+    techNews.innerHTML = html
 }
 fetchData('technology',5).then(add_techNews)
