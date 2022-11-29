@@ -3,44 +3,57 @@
 session_start();
 
 $comment = false;
+if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')   
+$url = "https://";   
+else  
+$url = "http://";   
+// Append the host(domain name, ip) to the URL.   
+$url.= $_SERVER['HTTP_HOST'];   
 
+// Append the requested resource location to the URL   
+$url.= $_SERVER['REQUEST_URI'];    
+
+$url_components = parse_url($url);
+
+// Use parse_str() function to parse the
+// string passed via URL
+parse_str($url_components['query'], $params);
+
+// Display result
+
+$hash_url = $params['url'];
+$url = base64_decode($hash_url);
+
+$select = "SELECT * FROM news_list WHERE id = '$hash_url'";
+$result = mysqli_query($conn, $select);
+if(mysqli_num_rows($result) > 0){
+    while($row = mysqli_fetch_assoc($result)) {
+        $like = $row['likes'];
+        $dislike = $row['dislikes'];
+        $comments = $row['comment'];
+    }
+}else{
+    $insert = "INSERT INTO news_list (id, url) VALUES ('$hash_url','$url')";
+
+    mysqli_query($conn, $insert);
+    $like = 0;
+    $dislike = 0;
+    $comments = "";
+}
 
 if(isset($_SESSION['name'])){
+    
     $name = $_SESSION['name'];
     $comment = true;
 
-    $select = " SELECT * FROM news WHERE id = '1234567'";
-
-    $result = mysqli_query($conn, $select);
-    if(mysqli_num_rows($result) > 0){
-        // output data of each row
-        while($row = mysqli_fetch_assoc($result)) {
-            $like = $row['likes'];
-            $dislike = $row['dislikes'];
-            $comments = $row['comment'];
-        }
-    }
 }
-
-if(isset($_POST['submit'])){
-    $commentss = mysqli_real_escape_string($conn, $_POST['comments']);
-    $myObj->name = $name;
-    $myObj->comments = $commentss;
-
-    $myJSON = json_encode($myObj);
-
-    echo "$myJSON";
-    $insert = "UPDATE news SET comment='$myJSON' WHERE id='1234567'";
-    mysqli_query($conn, $insert);
-
-
-};
 
 ?>
 
 
 <!DOCTYPE html>
 <head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -75,33 +88,55 @@ if(isset($_POST['submit'])){
             </div>
         </nav>
     </div>
-    <iframe style="width: 100%;height: 500px;"src="<?php echo $_GET['url']?>" title="description"></iframe>
-        <div class="reaction" style="width: 200px;height: 400px;"></div>
-        <div class="reaction" style="width: 500px;height: 500px;">
+    <iframe id="frame" style="width: 100%;height: 600px;" title="description"></iframe>
+    <div style="width: 100%">
+    <div style="display: flex;
+    flex-direction: column;">
+    
     <?php 
     if($comment){
-        $cmt = json_decode($comments);
+
         echo '
-        <form action="" method="post" autocomplete="off">
-        <i onclick = "like()" class="fa-regular fa-thumbs-up fa-2x"></i>
-        <p id="like">'.$like.'</p>
-
-        <i onclick = "dislike()" class="fa-regular fa-thumbs-down fa-2x"></i>
-        <p id="like">'.$dislike.'</p>
-
-        <div>'.$cmt['name'].': '.$cmt['comments'].'</div>
-
-        <p>'.$name.'</p>
-            <input type="text" name="comments" placeholder="Comments......">
-            <input type="submit" name="submit" value="Comment">
-        </form>
+        <div style="flex-direction: column; margin: 10px;">
+        <span onclick="like()" style="margin: 15px;">
+            <i id="like_icon" class="fa-regular fa-thumbs-up fa-2x"></i>
+            <b id="like">'.$like.'</b>
+        </span>
+        <span onclick="dislike()" style="margin: 15px;">
+            <i id="dislike_icon" class="fa-regular fa-thumbs-down fa-2x"></i>
+            <b id="dislike">'.$dislike.'</b>
+        </span>
+        </div>
+        <div style="margin: 15px;" id = "all_comments_box"> </div>
+        <div style="margin: 15px;">
+        <b id="name_box">'.$name.': </b>
+            <input style="width: 150px; height: 25px;padding:5px;" id="comment_box" type="text" name="comments" placeholder="Comments......">
+            <button style= "height: 25px; width:80px; margin-left:5px; background-color: black;
+            color: white;
+            border: 2px solid #FFFFFF; "onclick="submit()">Comment</button>
+        </div>
         
         ';    
     }else{
-        echo "hi";
+        echo '
+        <div style="flex-direction: column; margin: 10px;">
+        <span style="margin: 15px;">
+            <i id="like_icon" class="fa-regular fa-thumbs-up fa-2x"></i>
+            <b id="like">'.$like.'</b>
+        </span>
+        
+        <span style="margin: 15px;">
+            <i id="dislike_icon" class="fa-regular fa-thumbs-down fa-2x"></i>
+            <b id="dislike">'.$dislike.'</b>
+        </span>
+        </div>
+        <div id = "all_comments_box"> </div>
+
+        
+        '; 
     }
     ?>
-
+    </div>
     
     </div>
     <div class="footer">
@@ -145,26 +180,77 @@ if(isset($_POST['submit'])){
     </div>
 
 
-    
-
-
     <!-- <script src="./index.js"></script> -->
     <script>
-        function like(){
-            // x.classList.toggle("fa-solid");
-            // x.preventDefault();
-            <?php $like = $like + 1; 
-            $insert = "UPDATE news SET likes='$like' WHERE id='1234567'";
-            mysqli_query($conn, $insert);
-            
-            ?>
-            document.getElementById('like').innerHTML = <?php echo "$like" ?>;
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const hash_url = urlParams.get('url');
+        const all_comments_box = document.getElementById('all_comments_box');
+        var all_comments = [];
 
+        document.getElementById('frame').src = atob(hash_url);
+        $.ajax({
+            type: "GET",
+            url: "api.php",
+            data: {comments: hash_url},
+            success: function(res){
+
+                all_comments = JSON.parse(res);
+                for(let i = 0; i<all_comments.length; i++){
+                    all_comments_box.innerHTML += `<p> ${all_comments[i].name}: ${all_comments[i].comment}`;
+                }
+
+            }
+        })
+        function like(){
+            document.getElementById('like_icon').className = "fa-solid fa-thumbs-up fa-2x";
+            $.ajax({
+                type : "POST",  //type of method
+                url  : "api.php",  //your page
+                data : { likes : hash_url },// passing the values
+                success: function(res){  
+                    console.log(res);
+                    document.getElementById('like').innerHTML = res;
+                }
+            });
         }
-        function dislike(x){
-            x.classList.toggle("fa-solid");
+
+        function dislike(){
+            document.getElementById('dislike_icon').className = "fa-solid fa-thumbs-down fa-2x";
+            $.ajax({
+                type : "POST",  //type of method
+                url  : "api.php",  //your page
+                data : { dislikes : hash_url },// passing the values
+                success: function(res){  
+                    console.log(res);
+                    document.getElementById('dislike').innerHTML = res;
+                }
+            });
+        }
+
+        function submit(){
+            var comment = document.getElementById('comment_box').value;
+
+            var name = document.getElementById('name_box').innerText;
+            var obj = {
+                name: name,
+                comment: comment
+            };
+
+            all_comments.push(obj);
+            console.log(all_comments);
+            // console.log(JSON.stringify(obj));
+            $.ajax({
+                type : "POST",  //type of method
+                url  : "api.php",  //your page
+                data : { id:hash_url,comments : JSON.stringify(all_comments) },// passing the values
+                success: function(res){  
+                    location.reload();
+                }
+            });
         }
 
     </script>
+    
 </body>
 </html>

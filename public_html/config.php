@@ -1,5 +1,5 @@
 <?php
 
-$conn = mysqli_connect('localhost','root','','online_news');
+$conn = mysqli_connect('localhost','root','','newswebsite');
 
 ?>

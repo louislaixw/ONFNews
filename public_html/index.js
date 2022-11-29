@@ -30,15 +30,19 @@ window.addEventListener('scroll',()=>{
 })
 
 // fetching news data from a website providing api
-const apiKey = "0a2378092b2740c498334a128df5dfa3"
-//const apiKey = "00dcc41a750b48058681f323d5fbb8af"
+
+// const apiKey = "0a2378092b2740c498334a128df5dfa3"
+const apiKey = "00dcc41a750b48058681f323d5fbb8af"
 
 const fetchData = async (category,pageSize)=>{
     const url = `https://newsapi.org/v2/top-headlines?country=us&category=${category}&pageSize=${pageSize}&apiKey=${apiKey}`
     const data = await fetch(url)
     const response = await data.json()
     console.log(response);
-    return response.articles
+
+    articles = response.articles.filter((e)=>e.urlToImage !=null)
+    return articles;
+    // return response.articles
     
 }
 // fetchData('general',5)
@@ -46,16 +50,13 @@ const fetchData = async (category,pageSize)=>{
 //adding breaking news
 
 const add_breakingNews = (data)=>{
-    breakingImg.innerHTML = `<img src=${data[0].urlToImage} onclick = saveURL(${data[0].url}) alt="image">`
-    breakingNews_title.innerHTML = `<a onclick=saveURL(${data[0].url}) target="_blank"><h2>${data[0].title}</h2></a>`
+    var url = btoa(data[0].url);
+    breakingImg.innerHTML = `<img src=${data[0].urlToImage}  alt="image">`
+    breakingNews_title.innerHTML = `<a href="news.php?url=${url}" target="_blank"><h2>${data[0].title}</h2></a>`
     breakingNews_desc.innerHTML = `${data[0].description}`
 }
 fetchData('general',20).then(add_breakingNews)
 
-const saveURL = (data) => {
-    console.log('hihihhi');
-    sessionStorage.setItem("url", data);
-}
 
 const add_topNews = (data)=>{
     let html = ''
@@ -68,13 +69,15 @@ const add_topNews = (data)=>{
             title = element.title.slice(0,100) + "..."
         }
 
+        var url = btoa(element.url);
+
         html += `<div class="news">
                     <div class="img">
                         <img src=${element.urlToImage} alt="image">
                     </div>
                     <div class="text">
                         <div class="title">
-                        <a href=${window.location.origin}/news/public_html/news.php?url=${element.url} target="_blank"><p>${title}</p></a>
+                        <a href="news.php?url=${url}" target="_blank"><p>${title}</p></a>
                         </div>
                     </div>
                 </div>`
@@ -94,13 +97,15 @@ const add_sportsNews = (data)=>{
             title = element.title.slice(0,100) + "..."
         }
 
+        var url = btoa(element.url);
+
         html += `<div class="newsCard">
                     <div class="img">
                         <img src=${element.urlToImage} alt="image">
                     </div>
                     <div class="text">
                         <div class="title">
-                        <a href=${window.location.origin}/news/public_html/news.php?url=${element.url} target="_blank"><p>${title}</p></a>
+                        <a href="news.php?url=${url}" target="_blank"><p>${title}</p></a>
                         </div>
                     </div>
                 </div>`
@@ -119,13 +124,15 @@ const add_businessNews = (data)=>{
             title = element.title.slice(0,100) + "..."
         }
 
+        var url = btoa(element.url);
+
         html += `<div class="newsCard">
                     <div class="img">
                         <img src=${element.urlToImage} alt="image">
                     </div>
                     <div class="text">
                         <div class="title">
-                        <a href=${window.location.origin}/news/public_html/news.php?url=${element.url} target="_blank"><p>${title}</p></a>
+                        <a href="news.php?url=${url}" target="_blank"><p>${title}</p></a>
                         </div>
                     </div>
                 </div>`
@@ -144,13 +151,15 @@ const add_techNews = (data)=>{
             title = element.title.slice(0,100) + "..."
         }
 
+        var url = btoa(element.url); // encode a string
+
         html += `<div class="newsCard">
                     <div class="img">
                         <img src=${element.urlToImage} alt="image">
                     </div>
                     <div class="text">
                         <div class="title">
-                        <a href=${window.location.origin}/news/public_html/news.php?url=${element.url} target="_blank"><p>${title}</p></a>
+                        <a href="news.php?url=${url}" target="_blank"><p>${title}</p></a>
                         </div>
                     </div>
                 </div>`
@@ -158,3 +167,4 @@ const add_techNews = (data)=>{
     techNews.innerHTML = html
 }
 fetchData('technology',5).then(add_techNews)
+
