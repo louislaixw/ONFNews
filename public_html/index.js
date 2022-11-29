@@ -31,15 +31,18 @@ window.addEventListener('scroll',()=>{
 
 const apikey = "0a2378092b2740c498334a128df5dfa3";
 
-const fetchData = async (category,pageSize)=>{
-    const url = 'https://newsapi.org/v2/top-headlines?country=us&category=${category}&pageSize=${pageSize}&apiKey=${apiKey}';
-    
-    const data = await fetch(url);
-    const response = await data.json();
-    console.log(response);
-    return response.articles;
+function fetchData2(category, pageSize) {
+	var xmlHttp = new XMLHttpRequest();
+	xmlHttp.open("GET", `https://newsapi.org/v2/top-headlines?category=${category}
+	&pageSize=${pageSize}&apiKey=${apikey}`, false);
+	xmlHttp.send();
+	var dataArr = JSON.parse(xmlHttp.responseText);
+	console.log(dataArr);
+	return dataArr["articles"]; //
 }
-fetchData('general', 5);
+
+test2 = fetchData2('general', 20);
+console.log(test2);
 
 //adding breaking News 
 
