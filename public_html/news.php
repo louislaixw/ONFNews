@@ -18,6 +18,7 @@ $url_components = parse_url($url);
 // Use parse_str() function to parse the
 // string passed via URL
 parse_str($url_components['query'], $params);
+
 // Display result
 
 $hash_url = $params['url'];
@@ -44,7 +45,9 @@ if(isset($_SESSION['name'])){
     
     $name = $_SESSION['name'];
     $comment = true;
+
 }
+
 ?>
 
 
@@ -94,7 +97,7 @@ if(isset($_SESSION['name'])){
     if($comment){
 
         echo '
-        <div style="flex-direction: column; margin: 10px;">
+        <div style="flex-direction: column; margin: 10px;margin-top:20px;">
         <span onclick="like()" style="margin: 15px;">
             <i id="like_icon" class="fa-regular fa-thumbs-up fa-2x"></i>
             <b id="like">'.$like.'</b>
@@ -104,9 +107,9 @@ if(isset($_SESSION['name'])){
             <b id="dislike">'.$dislike.'</b>
         </span>
         </div>
-        <div style="margin: 15px;" id = "all_comments_box"> </div>
-        <div style="margin: 15px;">
-        <b id="name_box">'.$name.': </b>
+        <div style="padding-left: 15px;" id = "all_comments_box"> </div>
+        <div style="padding: 15px;">
+        <b id="name_box">'.$name.'</b> <b>:</b>
             <input style="width: 150px; height: 25px;padding:5px;" id="comment_box" type="text" name="comments" placeholder="Comments......">
             <button style= "height: 25px; width:80px; margin-left:5px; background-color: black;
             color: white;
@@ -127,7 +130,7 @@ if(isset($_SESSION['name'])){
             <b id="dislike">'.$dislike.'</b>
         </span>
         </div>
-        <div id = "all_comments_box"> </div>
+        <div style="padding-left: 15px;" id = "all_comments_box"> </div>
 
         
         '; 

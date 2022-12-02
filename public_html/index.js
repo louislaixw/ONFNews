@@ -31,7 +31,8 @@ window.addEventListener('scroll',()=>{
 
 // fetching news data from a website providing api
 
-const apiKey = "00dcc41a750b48058681f323d5fbb8af"
+
+const apiKey = "3a6e9936de2d4b518eaf210ab0aafd30"
 
 const fetchData = async (category,pageSize)=>{
     const url = `https://newsapi.org/v2/top-headlines?country=us&category=${category}&pageSize=${pageSize}&apiKey=${apiKey}`
@@ -40,11 +41,12 @@ const fetchData = async (category,pageSize)=>{
     console.log(response);
 
     articles = response.articles.filter((e)=>e.urlToImage !=null)
+    articles = articles.filter((e)=>["Gematsu","Windows Central","Speedhunters.com","CarScoops","GameSpot","The Wall Street Journal","Mortgage News Daily","CoinDesk","OilPrice.com","Endpoints News","Decrypt","The ACC","247Sports","The Action Network","CBS News","sportsmockery.com","KTLA Los Angeles","Study Finds","MacRumors","Wired","Associated Press","Theepochtimes.com","Reuters","Electrek","Daily Mail","NBCSports.com","Axios","9to5google.com"].includes(e.source.name))
     return articles;
     // return response.articles
     
 }
-fetchData('general',5)
+// fetchData('general',5)
 
 //adding breaking news
 
@@ -54,7 +56,7 @@ const add_breakingNews = (data)=>{
     breakingNews_title.innerHTML = `<a href="news.php?url=${url}" target="_blank"><h2>${data[0].title}</h2></a>`
     breakingNews_desc.innerHTML = `${data[0].description}`
 }
-fetchData('general',20).then(add_breakingNews)
+fetchData('general',50).then(add_breakingNews)
 
 
 const add_topNews = (data)=>{
@@ -83,7 +85,7 @@ const add_topNews = (data)=>{
     })
     topNews.innerHTML = html
 }
-fetchData('general',20).then(add_topNews)
+fetchData('general',50).then(add_topNews)
 
 const add_sportsNews = (data)=>{
     let html = ''
@@ -111,8 +113,7 @@ const add_sportsNews = (data)=>{
     })
     sportsNews.innerHTML = html
 }
-fetchData('sports',5).then(add_sportsNews)
-
+fetchData('sports',50).then(add_sportsNews)
 const add_businessNews = (data)=>{
     let html = ''
     let title = ''
@@ -139,7 +140,7 @@ const add_businessNews = (data)=>{
     })
     businessNews.innerHTML = html
 }
-fetchData('business',5).then(add_businessNews)
+fetchData('business',50).then(add_businessNews)
 const add_techNews = (data)=>{
     let html = ''
     let title = ''
@@ -166,5 +167,5 @@ const add_techNews = (data)=>{
     })
     techNews.innerHTML = html
 }
-fetchData('technology',5).then(add_techNews)
+fetchData('technology',50).then(add_techNews)
 

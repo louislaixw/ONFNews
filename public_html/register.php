@@ -44,6 +44,7 @@ if(isset($_POST['submit'])){
 </head>
 <style>
     #c{
+        /* margin: 200px; */
         padding: 100px;
     }
     #font1{
@@ -57,6 +58,7 @@ if(isset($_POST['submit'])){
         height: 35px;
         padding: 10px;
         margin-top:10px;
+
     }
     #submit_btn{
         width: 250px;
